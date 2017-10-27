@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 
@@ -31,6 +32,12 @@ public class CityListActivity extends AppCompatActivity {
         WeatherAdapter weatherAdapter = new WeatherAdapter(this, weatherDataList);
         lviWeatherList = findViewById(R.id.lviWeatherList);
         lviWeatherList.setAdapter(weatherAdapter);
+        lviWeatherList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                viewCityDetails();
+            }
+        });
 
 
         btnRefresh = findViewById(R.id.btnRefresh);
@@ -51,12 +58,18 @@ public class CityListActivity extends AppCompatActivity {
     }
 
     private void refresh() {
-        //Test code for UI
-        Intent intent = new Intent(this, CityDetailsActivity.class);
-        startActivity(intent);
+
     }
 
     private void addCityToList() {
 
+    }
+
+    private void viewCityDetails() {
+        Intent detailsIntent = new Intent(this, CityDetailsActivity.class);
+        //Put data extras here
+
+        //probably should be start activity for result
+        startActivity(detailsIntent);
     }
 }
