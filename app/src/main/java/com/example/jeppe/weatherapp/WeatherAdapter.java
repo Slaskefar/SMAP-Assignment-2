@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.jeppe.weatherapp.models.CityWeatherData;
@@ -56,20 +57,27 @@ public class WeatherAdapter extends BaseAdapter {
 
         //we only need to create the views once, if not null we will reuse the existing view and update its values
         if (convertView == null) {
-            LayoutInflater weatherInflator = (LayoutInflater) this.context
+            LayoutInflater weatherInflater = (LayoutInflater) this.context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = weatherInflator.inflate(R.layout.weather_list_item, null);
+            convertView = weatherInflater.inflate(R.layout.weather_list_item, null);
         }
 
         weatherDataItem = weatherData.get(position);
         if(weatherDataItem!=null){
-            //set the title text from the demo list
-            /*TextView txtTitle = (TextView) convertView.findViewById(R.id.txtDemoTitle);
-            txtTitle.setText(demo.getName());
+            //set the properties from weatherDataItem
+            TextView txtListCityName = convertView.findViewById(R.id.txtListCityName);
+            txtListCityName.setText(weatherDataItem.cityName);
 
-            //set the description text from the demo list
-            TextView txtDescription = (TextView) convertView.findViewById(R.id.txtDemoDescription);
-            txtDescription.setText(demoprefix + "! " + demo.getDescription());*/
+            TextView txtListHumidity = convertView.findViewById(R.id.txtListHumidity);
+            txtListHumidity.setText(Integer.toString(weatherDataItem.humidity));
+
+            TextView txtListTemperature = convertView.findViewById(R.id.txtListTemperature);
+            txtListTemperature.setText(Integer.toString(weatherDataItem.temperature));
+
+            /* Need to be set somehow
+            ImageView imgListWeatherIcon = convertView.findViewById(R.id.imgListWeatherIcon);
+            imgListWeatherIcon.setImageBitmap(something);
+            */
         }
         return convertView;
     }
