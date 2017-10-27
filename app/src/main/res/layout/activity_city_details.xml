@@ -6,4 +6,103 @@
     android:layout_height="match_parent"
     tools:context="com.example.jeppe.weatherapp.CityDetailsActivity">
 
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="142dp"
+        android:layout_height="113dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@color/colorPrimary"
+        tools:layout_editor_absoluteX="121dp" />
+
+    <TextView
+        android:id="@+id/txtCityName"
+        android:layout_width="142dp"
+        android:layout_height="33dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/imageView"
+        tools:layout_editor_absoluteX="121dp" />
+
+    <TextView
+        android:id="@+id/txtHumidity"
+        android:layout_width="64dp"
+        android:layout_height="43dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="8dp"
+        android:textSize="30sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtCityName" />
+
+    <TextView
+        android:id="@+id/txtTemperature"
+        android:layout_width="64dp"
+        android:layout_height="43dp"
+        android:layout_marginTop="8dp"
+        android:textSize="30sp"
+        app:layout_constraintEnd_toStartOf="@+id/txtDegree"
+        app:layout_constraintTop_toBottomOf="@+id/txtCityName" />
+
+    <TextView
+        android:id="@+id/txtHumidityPercent"
+        android:layout_width="64dp"
+        android:layout_height="43dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/cityDetailsActivity_txtPercentage"
+        android:textSize="30sp"
+        app:layout_constraintStart_toEndOf="@+id/txtHumidity"
+        app:layout_constraintTop_toBottomOf="@+id/txtCityName" />
+
+    <TextView
+        android:id="@+id/txtDegree"
+        android:layout_width="64dp"
+        android:layout_height="43dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/cityDetailsActivity_txtDegree"
+        android:textSize="30sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtCityName" />
+
+    <TextView
+        android:id="@+id/txtDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="32dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="24dp"
+        android:text="@string/cityDetailsActivity_txtDescription"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtHumidity" />
+
+    <TextView
+        android:id="@+id/txtWeatherDescription"
+        android:layout_width="0dp"
+        android:layout_height="43dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="8dp"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtDescription" />
+
+    <Button
+        android:id="@+id/btnRemove"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:layout_marginStart="32dp"
+        android:text="@string/cityDetailsActivity_btnRemove"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/btnOk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:layout_marginEnd="32dp"
+        android:text="@string/cityDetailsActivity_btnOk"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 </android.support.constraint.ConstraintLayout>
