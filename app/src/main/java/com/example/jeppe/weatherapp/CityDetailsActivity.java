@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import com.example.jeppe.weatherapp.DAL.DataHelper;
+
 public class CityDetailsActivity extends AppCompatActivity {
     Button btnRemove;
     Button btnOk;
@@ -31,8 +33,11 @@ public class CityDetailsActivity extends AppCompatActivity {
     }
 
     private void removeCity() {
+        DataHelper dataHelper = new DataHelper(this);
+        //dataHelper.deleteCity();
     }
 
     private void ok() {
+        finish();
     }
 }
