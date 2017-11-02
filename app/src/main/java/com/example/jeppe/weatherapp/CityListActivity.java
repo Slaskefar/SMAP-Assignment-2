@@ -9,13 +9,9 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-
 import com.example.jeppe.weatherapp.DAL.DataHelper;
 import com.example.jeppe.weatherapp.models.CityWeatherData;
-
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 public class CityListActivity extends AppCompatActivity {
 
@@ -29,13 +25,15 @@ public class CityListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_city_list);
         dataHelper = new DataHelper(this);
-        // Test code with list view
-        final ArrayList<CityWeatherData> weatherDataList = new ArrayList<>();
-        
+        //dataHelper.addCity(new CityWeatherData("testId","TestCity",10,12,"Some Description"));
+
+        final ArrayList<CityWeatherData> weatherDataList;
+        weatherDataList = dataHelper.getCities();
+        /*// Test code with list view
         for(int i=0;i<10;i++) {
             weatherDataList.add(new CityWeatherData("" + i, "WeatherData " + i, i, i, "Description " + i));
         }
-        //End of test code
+        // End of test code*/
         edtCityName = findViewById(R.id.edtCityName);
         final WeatherAdapter weatherAdapter = new WeatherAdapter(this, weatherDataList);
         lviWeatherList = findViewById(R.id.lviWeatherList);
@@ -70,9 +68,7 @@ public class CityListActivity extends AppCompatActivity {
     }
 
     private void addCityToList() {
-        String cityName = edtCityName.getText().toString();
-        dataHelper.addCity(cityName);
-        Set<String> citys = dataHelper.getCitys();
+        // Call method on service
     }
 
     private void viewCityDetails(String city) {
