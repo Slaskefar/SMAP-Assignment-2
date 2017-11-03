@@ -1,7 +1,10 @@
 package com.example.jeppe.weatherapp;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
-import android.provider.ContactsContract;
+import android.content.IntentFilter;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -11,6 +14,12 @@ import android.widget.EditText;
 import android.widget.ListView;
 import com.example.jeppe.weatherapp.DAL.DataHelper;
 import com.example.jeppe.weatherapp.models.CityWeatherData;
+import java.util.ArrayList;
+
+import com.example.jeppe.weatherapp.models.CityWeather;
+import com.example.jeppe.weatherapp.services.WeatherService;
+import com.google.gson.Gson;
+
 import java.util.ArrayList;
 
 public class CityListActivity extends AppCompatActivity {
