@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -25,6 +26,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -155,20 +157,29 @@ public class WeatherService extends Service {
     }
 
     private void broadcastWeather() {
-//        Log.d("Weatherservice", "broadcasting weather");
-//        Intent intent = new Intent("weather-event");
-//        intent.putExtra("weather", allCityWeather);
+        Log.d("Weatherservice", "broadcasting weather");
+        Intent intent = new Intent("weather-event");
+//        if (gson == null) {
+//            gson = new Gson();
+//        }
+//        intent.putExtra("weather", gson.toJson(allCityWeather));
 //        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+        Bundle args = new Bundle();
+        args.putSerializable("weatherObj", (Serializable)allCityWeather);
+        intent.putExtra("weather", args);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
     private ArrayList<CityWeather> weatherDataToCityWeatherList(WeatherData weatherData)
     {
         ArrayList<CityWeather> cityWeatherList = new ArrayList<CityWeather>();
 
-        while(weatherData.getList().iterator().hasNext())
+        Iterator<com.example.jeppe.weatherapp.models.weatherDataResponse.List> iter = weatherData.getList().iterator();
+
+        while(iter.hasNext())
         {
             CityWeather cityWeather = new CityWeather();
-            com.example.jeppe.weatherapp.models.weatherDataResponse.List list = weatherData.getList().iterator().next();
+            com.example.jeppe.weatherapp.models.weatherDataResponse.List list = iter.next();
 
             cityWeather.weatherDescription = list.getWeather().iterator().next().getDescription();
             cityWeather.cityName = list.getName();
