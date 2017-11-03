@@ -5,9 +5,9 @@ package com.example.jeppe.weatherapp.models;
  */
 
 public class CityWeather {
-    public String id;
+    public int id;
     public String cityName;
-    public int temperature;
+    public Double temperature;
     public int humidity;
     public String weatherDescription;
     public String iconType;

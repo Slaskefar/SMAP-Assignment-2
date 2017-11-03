@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.IBinder;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.android.volley.Request;
@@ -16,13 +17,19 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.jeppe.weatherapp.models.CityWeather;
+import com.example.jeppe.weatherapp.models.weatherDataResponse.WeatherData;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Array;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 public class WeatherService extends Service {
 
@@ -34,7 +41,7 @@ public class WeatherService extends Service {
     RequestQueue queue;
     Gson gson;
     CityWeather singleCityWeather;
-    ArrayList<CityWeather> allCityWeather;
+    List<CityWeather> allCityWeather;
     ArrayList<Integer> cityIds;
 
     public WeatherService() {
@@ -80,8 +87,9 @@ public class WeatherService extends Service {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        allCityWeather = weatherJsonToPojo(response);
+                        allCityWeather = weatherJsonToArrayList(response);
                         //Push notification
+                        broadcastWeather();
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -121,13 +129,16 @@ public class WeatherService extends Service {
         return null;
     }
 
-    private ArrayList<CityWeather> weatherJsonToPojo(String json) {
+    private ArrayList<CityWeather> weatherJsonToArrayList(String json) {
         if (gson == null) {
             gson = new Gson();
         }
-        Type collectionType = new TypeToken<ArrayList<CityWeather>>(){}.getType();
-        ArrayList<CityWeather> weather = gson.fromJson(json, collectionType);
-        return weather;
+        Type collectionType = new TypeToken<WeatherData>(){}.getType();
+
+        WeatherData weatherData = gson.fromJson(json, collectionType);
+        ArrayList<CityWeather> cityWeatherList = weatherDataToCityWeatherList(weatherData);
+
+        return cityWeatherList;
     }
 
     // turns an arraylist of names into a single comma-separated string
@@ -141,5 +152,33 @@ public class WeatherService extends Service {
             }
         }
         return strCityIds;
+    }
+
+    private void broadcastWeather() {
+//        Log.d("Weatherservice", "broadcasting weather");
+//        Intent intent = new Intent("weather-event");
+//        intent.putExtra("weather", allCityWeather);
+//        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+    }
+
+    private ArrayList<CityWeather> weatherDataToCityWeatherList(WeatherData weatherData)
+    {
+        ArrayList<CityWeather> cityWeatherList = new ArrayList<CityWeather>();
+
+        while(weatherData.getList().iterator().hasNext())
+        {
+            CityWeather cityWeather = new CityWeather();
+            com.example.jeppe.weatherapp.models.weatherDataResponse.List list = weatherData.getList().iterator().next();
+
+            cityWeather.weatherDescription = list.getWeather().iterator().next().getDescription();
+            cityWeather.cityName = list.getName();
+            cityWeather.humidity = list.getMain().getHumidity();
+            cityWeather.temperature = list.getMain().getTemp();
+            cityWeather.iconType = list.getWeather().iterator().next().getIcon();
+            cityWeather.id = list.getId();
+
+            cityWeatherList.add(cityWeather);
+        }
+        return cityWeatherList;
     }
 }
