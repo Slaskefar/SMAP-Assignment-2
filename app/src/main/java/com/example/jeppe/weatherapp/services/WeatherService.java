@@ -67,6 +67,7 @@ public class WeatherService extends Service {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
+<<<<<<< HEAD
     //method stolen from SMAP lecture demo L8
     private boolean checkNetwork() {
         ConnectivityManager connectMan = (ConnectivityManager)this.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -192,4 +193,7 @@ public class WeatherService extends Service {
         }
         return cityWeatherList;
     }
+=======
+
+>>>>>>> master
 }

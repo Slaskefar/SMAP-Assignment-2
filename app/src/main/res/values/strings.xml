@@ -1,3 +1,10 @@
 <resources>
-    <string name="app_name">WeatherApp</string>
+    <string name="cityListActivity_btnAdd">Add</string>
+    <string name="cityListActivity_btnRefresh">Refresh</string>
+    <string name="app_name">City Weather</string>
+    <string name="cityDetailsActivity_btnRemove">Remove</string>
+    <string name="cityDetailsActivity_btnOk">OK</string>
+    <string name="cityDetailsActivity_txtDescription">Description</string>
+    <string name="cityDetailsActivity_txtPercentage">%</string>
+    <string name="cityDetailsActivity_txtDegree">C</string>
 </resources>
