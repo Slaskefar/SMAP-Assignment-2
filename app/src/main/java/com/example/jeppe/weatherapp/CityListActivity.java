@@ -14,6 +14,8 @@ import android.widget.EditText;
 import android.widget.ListView;
 import com.example.jeppe.weatherapp.DAL.DataHelper;
 import com.example.jeppe.weatherapp.models.CityWeather;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import com.example.jeppe.weatherapp.Globals;
 
@@ -23,6 +25,8 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
+import javax.microedition.khronos.opengles.GL;
+
 public class CityListActivity extends AppCompatActivity {
 
     Button btnRefresh;
@@ -30,6 +34,7 @@ public class CityListActivity extends AppCompatActivity {
     ListView lviWeatherList;
     private DataHelper dataHelper;
     EditText edtCityName;
+    int CITY_LIST_ACTIVITY_INTENT_CODE = 101;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +57,7 @@ public class CityListActivity extends AppCompatActivity {
         lviWeatherList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                viewCityDetails(weatherDataList.get(i).cityName);
+                viewCityDetails(weatherDataList.get(i));
             }
         });
 
@@ -86,11 +91,31 @@ public class CityListActivity extends AppCompatActivity {
         startService(serviceIntent);
     }
 
-    private void viewCityDetails(String city) {
+    private void viewCityDetails(CityWeather city) {
         Intent detailsIntent = new Intent(this, CityDetailsActivity.class);
-        //Put data extras here
-        detailsIntent.putExtra("CITYNAME", city);
+        Bundle args = new Bundle();
+        args.putSerializable(Globals.CITY_DETAILS_SINGLE_CITY, city);
+        detailsIntent.putExtra(Globals.CITY_DETAILS_BUNDLE, args);
         //probably should be start activity for result
-        startActivity(detailsIntent);
+        startActivityForResult(detailsIntent, CITY_LIST_ACTIVITY_INTENT_CODE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == CITY_LIST_ACTIVITY_INTENT_CODE) {
+            switch (resultCode) {
+                case RESULT_OK:
+                    //Do nothing
+                    break;
+                case Globals.REMOVE_CITY:
+
+                    break;
+            }
+
+        }
+    }
+
+    private void removeCity() {
+        //Remove city here and refresh ui here
     }
 }

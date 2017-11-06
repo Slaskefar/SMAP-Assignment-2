@@ -20,9 +20,10 @@
     <TextView
         android:id="@+id/txtCityName"
         android:layout_width="142dp"
-        android:layout_height="33dp"
+        android:layout_height="45dp"
         android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
+        android:textSize="36sp"
         app:layout_constraintStart_toEndOf="@+id/imgWeatherIcon"
         app:layout_constraintTop_toTopOf="parent" />
 
