@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
@@ -17,7 +18,10 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.jeppe.weatherapp.DAL.DataHelper;
+import com.example.jeppe.weatherapp.Globals;
 import com.example.jeppe.weatherapp.models.CityWeather;
+import com.example.jeppe.weatherapp.models.CityWeatherData;
 import com.example.jeppe.weatherapp.models.weatherDataResponse.WeatherData;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -42,30 +46,50 @@ public class WeatherService extends Service {
 
     RequestQueue queue;
     Gson gson;
-    CityWeather singleCityWeather;
+    CityWeatherData singleCityWeatherData;
     List<CityWeather> allCityWeather;
     ArrayList<Integer> cityIds;
+    private DataHelper dataHelper;
 
     public WeatherService() {
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+
+        if (intent != null) {
+            if (intent.hasCategory(Globals.WEATHER_SERVICE_ADD_CITY_WEATHER)) {
+                String city = intent.getStringExtra(Globals.WEATHER_SERVICE_ADD_CITY_WEATHER_DATA);
+                addWeatherCity(city);
+            }
+        }
         // insert mock data
         cityIds = new ArrayList<>();
         cityIds.add(524901);
         cityIds.add(703448);
 
+        dataHelper = new DataHelper(this);
 //        checkNetwork();
         getAllCityWeather();
         return super.onStartCommand(intent, flags, startId);
     }
 
+    public class LocalBinder extends Binder {
+         public WeatherService getService() {
+            return WeatherService.this;
+        }
+    }
+
+
+
     @Override
     public IBinder onBind(Intent intent) {
-        // TODO: Return the communication channel to the service.
-        throw new UnsupportedOperationException("Not yet implemented");
+        return mBinder;
     }
+
+    // This is the object that receives interactions from clients.  See
+    // RemoteService for a more complete example.
+    private final IBinder mBinder = new LocalBinder();
 
     //method stolen from SMAP lecture demo L8
     private boolean checkNetwork() {
@@ -143,6 +167,26 @@ public class WeatherService extends Service {
         return cityWeatherList;
     }
 
+    private CityWeatherData weatherJsonToCityWeatherData(String json) {
+        if (gson == null) {
+            gson = new Gson();
+        }
+        Type collectionType = new TypeToken<com.example.jeppe.weatherapp.models.weatherDataResponse.List>(){}.getType();
+
+        com.example.jeppe.weatherapp.models.weatherDataResponse.List weatherData = gson.fromJson(json, collectionType);
+        CityWeatherData cityWeatherData = convertToWCityWeatherData(weatherData);
+
+        return cityWeatherData;
+    }
+
+    private CityWeatherData convertToWCityWeatherData(com.example.jeppe.weatherapp.models.weatherDataResponse.List weatherData)
+    {
+        CityWeatherData cityWeatherData = null;
+        cityWeatherData = new CityWeatherData(weatherData.getId().toString(),weatherData.getName(), 2,weatherData.getMain().getHumidity(),weatherData.getWeather().iterator().next().getDescription());
+
+        return cityWeatherData;
+    }
+
     // turns an arraylist of names into a single comma-separated string
     private String cityIdsToString(ArrayList<Integer> cityIds) {
         String strCityIds = "";
@@ -191,5 +235,31 @@ public class WeatherService extends Service {
             cityWeatherList.add(cityWeather);
         }
         return cityWeatherList;
+    }
+
+    public void addWeatherCity(String cityName){
+        if (queue == null) {
+            queue = Volley.newRequestQueue(this);
+        }
+
+        String url = WEATHER_API_BASE_URL + WEATHER_API_GET_SINGLE + cityName + API_KEY;
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        singleCityWeatherData = weatherJsonToCityWeatherData(response);
+                        dataHelper.addCity(singleCityWeatherData);
+                        //Push notification
+                        broadcastWeather();
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                singleCityWeatherData = null;
+                //Push notification
+            }
+        });
+
+        queue.add(stringRequest);
     }
 }

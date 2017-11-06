@@ -15,6 +15,7 @@ import android.widget.ListView;
 import com.example.jeppe.weatherapp.DAL.DataHelper;
 import com.example.jeppe.weatherapp.models.CityWeatherData;
 import java.util.ArrayList;
+import com.example.jeppe.weatherapp.Globals;
 
 import com.example.jeppe.weatherapp.models.CityWeather;
 import com.example.jeppe.weatherapp.services.WeatherService;
@@ -29,6 +30,7 @@ public class CityListActivity extends AppCompatActivity {
     ListView lviWeatherList;
     private DataHelper dataHelper;
     EditText edtCityName;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,7 +79,11 @@ public class CityListActivity extends AppCompatActivity {
     }
 
     private void addCityToList() {
-        // Call method on service
+        Intent serviceIntent = new Intent(this, WeatherService.class);
+        serviceIntent.addCategory(Globals.WEATHER_SERVICE_ADD_CITY_WEATHER);
+        String city = edtCityName.getText().toString();
+        serviceIntent.putExtra(Globals.WEATHER_SERVICE_ADD_CITY_WEATHER_DATA, city);
+        startService(serviceIntent);
     }
 
     private void viewCityDetails(String city) {
