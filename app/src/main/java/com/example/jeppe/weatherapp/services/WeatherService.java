@@ -74,7 +74,7 @@ public class WeatherService extends Service {
         return super.onStartCommand(intent, flags, startId);
     }
 
-    public class LocalBinder extends Binder {
+    public class WeatherBinder extends Binder {
          public WeatherService getService() {
             return WeatherService.this;
         }
@@ -89,7 +89,7 @@ public class WeatherService extends Service {
 
     // This is the object that receives interactions from clients.  See
     // RemoteService for a more complete example.
-    private final IBinder mBinder = new LocalBinder();
+    private final IBinder mBinder = new WeatherBinder();
 
     //method stolen from SMAP lecture demo L8
     private boolean checkNetwork() {
