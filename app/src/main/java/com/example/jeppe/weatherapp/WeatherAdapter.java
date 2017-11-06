@@ -10,7 +10,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.jeppe.weatherapp.models.CityWeatherData;
+import com.example.jeppe.weatherapp.models.CityWeather;
 
 import java.util.List;
 
@@ -21,10 +21,10 @@ import java.util.List;
 public class WeatherAdapter extends BaseAdapter {
 
     private Context context;
-    private List<CityWeatherData> weatherData;
-    private CityWeatherData weatherDataItem;
+    private List<CityWeather> weatherData;
+    private CityWeather weatherDataItem;
 
-    public WeatherAdapter(@NonNull Context context, @NonNull List<CityWeatherData> weatherData) {
+    public WeatherAdapter(@NonNull Context context, @NonNull List<CityWeather> weatherData) {
         this.context = context;
         this.weatherData = weatherData;
     }
@@ -44,7 +44,7 @@ public class WeatherAdapter extends BaseAdapter {
     }
 
     @Override
-    public CityWeatherData getItem(int position) {
+    public CityWeather getItem(int position) {
         if(weatherData!=null) {
             return weatherData.get(position);
         } else {
@@ -72,7 +72,7 @@ public class WeatherAdapter extends BaseAdapter {
             txtListHumidity.setText(Integer.toString(weatherDataItem.humidity));
 
             TextView txtListTemperature = convertView.findViewById(R.id.txtListTemperature);
-            txtListTemperature.setText(Integer.toString(weatherDataItem.temperature));
+            txtListTemperature.setText(Double.toString(weatherDataItem.temperature));
 
             /* Need to be set somehow
             ImageView imgListWeatherIcon = convertView.findViewById(R.id.imgListWeatherIcon);

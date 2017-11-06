@@ -13,7 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import com.example.jeppe.weatherapp.DAL.DataHelper;
-import com.example.jeppe.weatherapp.models.CityWeatherData;
+import com.example.jeppe.weatherapp.models.CityWeather;
 import java.util.ArrayList;
 import com.example.jeppe.weatherapp.Globals;
 
@@ -36,13 +36,13 @@ public class CityListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_city_list);
         dataHelper = new DataHelper(this);
-        //dataHelper.addCity(new CityWeatherData("testId","TestCity",10,12,"Some Description"));
+        //dataHelper.addCity(new CityWeather("testId","TestCity",10,12,"Some Description"));
 
-        final ArrayList<CityWeatherData> weatherDataList;
+        final ArrayList<CityWeather> weatherDataList;
         weatherDataList = dataHelper.getCities();
         /*// Test code with list view
         for(int i=0;i<10;i++) {
-            weatherDataList.add(new CityWeatherData("" + i, "WeatherData " + i, i, i, "Description " + i));
+            weatherDataList.add(new CityWeather("" + i, "WeatherData " + i, i, i, "Description " + i));
         }
         // End of test code*/
         edtCityName = findViewById(R.id.edtCityName);

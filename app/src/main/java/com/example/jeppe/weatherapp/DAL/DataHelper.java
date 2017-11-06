@@ -3,7 +3,7 @@ package com.example.jeppe.weatherapp.DAL;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.example.jeppe.weatherapp.models.CityWeatherData;
+import com.example.jeppe.weatherapp.models.CityWeather;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
@@ -19,21 +19,21 @@ public class DataHelper {
     public DataHelper(Context context){
         sharedPref = context.getSharedPreferences("Pref", Context.MODE_PRIVATE);
         gson = new Gson();
-        cityWeatherType = new TypeToken<ArrayList<CityWeatherData>>(){}.getType();
+        cityWeatherType = new TypeToken<ArrayList<CityWeather>>(){}.getType();
     }
 
-    public ArrayList<CityWeatherData> getCities(){
+    public ArrayList<CityWeather> getCities(){
         String citiesString = sharedPref.getString(CITYKEY,null);
         if(citiesString != null){
-            ArrayList<CityWeatherData> weatherData = gson.fromJson(citiesString, cityWeatherType);
+            ArrayList<CityWeather> weatherData = gson.fromJson(citiesString, cityWeatherType);
             return weatherData;
         }
         return new ArrayList<>();
     }
 
-    public void addCity(CityWeatherData city){
+    public void addCity(CityWeather city){
         String citiesString = sharedPref.getString(CITYKEY, null);
-        ArrayList<CityWeatherData> weatherData = null;
+        ArrayList<CityWeather> weatherData = null;
         if (citiesString != null) {
             weatherData = gson.fromJson(citiesString, cityWeatherType);
             weatherData.add(city);
@@ -47,13 +47,13 @@ public class DataHelper {
         }
     }
 
-    public void deleteCity(CityWeatherData city){
+    public void deleteCity(CityWeather city){
         String citiesString = sharedPref.getString(CITYKEY, null);
-        ArrayList<CityWeatherData> weatherData = null;
+        ArrayList<CityWeather> weatherData = null;
         if (citiesString != null) {
             weatherData = gson.fromJson(citiesString, cityWeatherType);
-            for (Iterator<CityWeatherData> iter = weatherData.listIterator(); iter.hasNext(); ) {
-                CityWeatherData w = iter.next();
+            for (Iterator<CityWeather> iter = weatherData.listIterator(); iter.hasNext(); ) {
+                CityWeather w = iter.next();
                 if (w.id == city.id) {
                     iter.remove();
                 }
