@@ -36,9 +36,18 @@ public class DataHelper {
         ArrayList<CityWeather> weatherData = null;
         if (citiesString != null) {
             weatherData = gson.fromJson(citiesString, cityWeatherType);
-            weatherData.add(city);
-            String newWeatherDataString = gson.toJson(weatherData, cityWeatherType);
-            sharedPref.edit().putString(CITYKEY, newWeatherDataString).commit();
+            boolean alreadyPresent = false;
+            for (Iterator<CityWeather> iter = weatherData.listIterator(); iter.hasNext(); ) {
+                CityWeather w = iter.next();
+                if (w.id == city.id) {
+                    alreadyPresent = true;
+                }
+            }
+            if(!alreadyPresent) {
+                weatherData.add(city);
+                String newWeatherDataString = gson.toJson(weatherData, cityWeatherType);
+                sharedPref.edit().putString(CITYKEY, newWeatherDataString).commit();
+            }
         } else {
             weatherData = new ArrayList<>();
             weatherData.add(city);

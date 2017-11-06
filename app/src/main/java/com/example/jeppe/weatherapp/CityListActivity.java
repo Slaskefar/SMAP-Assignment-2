@@ -28,6 +28,7 @@ import com.example.jeppe.weatherapp.services.WeatherService;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import javax.microedition.khronos.opengles.GL;
 
@@ -40,6 +41,8 @@ public class CityListActivity extends AppCompatActivity {
     EditText edtCityName;
     int CITY_LIST_ACTIVITY_INTENT_CODE = 101;
     WeatherService weatherService;
+    WeatherAdapter weatherAdapter;
+    ArrayList<CityWeather> weatherDataList;
     private Boolean bound = false;
 
     @Override
@@ -49,15 +52,9 @@ public class CityListActivity extends AppCompatActivity {
         dataHelper = new DataHelper(this);
         //dataHelper.addCity(new CityWeather("testId","TestCity",10,12,"Some Description"));
 
-        final ArrayList<CityWeather> weatherDataList;
         weatherDataList = dataHelper.getCities();
-        /*// Test code with list view
-        for(int i=0;i<10;i++) {
-            weatherDataList.add(new CityWeather("" + i, "WeatherData " + i, i, i, "Description " + i));
-        }
-        // End of test code*/
         edtCityName = findViewById(R.id.edtCityName);
-        final WeatherAdapter weatherAdapter = new WeatherAdapter(this, weatherDataList);
+        weatherAdapter = new WeatherAdapter(this, weatherDataList);
         lviWeatherList = findViewById(R.id.lviWeatherList);
         lviWeatherList.setAdapter(weatherAdapter);
         lviWeatherList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -137,6 +134,8 @@ public class CityListActivity extends AppCompatActivity {
             Bundle bundle = intent.getBundleExtra("weather");
             ArrayList<CityWeather> weather = (ArrayList<CityWeather>)bundle.getSerializable("weatherObj");
             //do something with weather
+            weatherAdapter.weatherData = weather;
+            weatherAdapter.notifyDataSetChanged();
         }
     };
 
@@ -165,14 +164,19 @@ public class CityListActivity extends AppCompatActivity {
                     //Do nothing
                     break;
                 case Globals.REMOVE_CITY:
-
+                    removeCity(data.getIntExtra(Globals.CITY_DETAILS_REMOVE_CITY, -1));
                     break;
             }
-
         }
     }
 
-    private void removeCity() {
+    private void removeCity(int cityId) {
         //Remove city here and refresh ui here
+        CityWeather cityToRemove = new CityWeather();
+        cityToRemove.id = cityId;
+        dataHelper.deleteCity(cityToRemove);
+        weatherDataList = dataHelper.getCities();
+        weatherAdapter.weatherData = weatherDataList;
+        weatherAdapter.notifyDataSetChanged();
     }
 }

@@ -10,4 +10,5 @@ public class Globals {
     public static final String CITY_DETAILS_SINGLE_CITY = "city_details_single_city";
     public static final String CITY_DETAILS_BUNDLE = "city_details_bundle";
     public static final int REMOVE_CITY = 201;
+    public static final String CITY_DETAILS_REMOVE_CITY = "city_details_remove_city";
 }

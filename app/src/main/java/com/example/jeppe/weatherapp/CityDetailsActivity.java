@@ -73,6 +73,7 @@ public class CityDetailsActivity extends AppCompatActivity {
 
     private void removeCity() {
         Intent returnIntent = new Intent();
+        returnIntent.putExtra(Globals.CITY_DETAILS_REMOVE_CITY, currentCityWeather.id);
         setResult(Globals.REMOVE_CITY, returnIntent);
         finish();
     }

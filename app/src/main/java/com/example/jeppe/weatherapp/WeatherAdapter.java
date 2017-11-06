@@ -21,7 +21,7 @@ import java.util.List;
 public class WeatherAdapter extends BaseAdapter {
 
     private Context context;
-    private List<CityWeather> weatherData;
+    public List<CityWeather> weatherData;
     private CityWeather weatherDataItem;
 
     public WeatherAdapter(@NonNull Context context, @NonNull List<CityWeather> weatherData) {
