@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -255,6 +256,8 @@ public class WeatherService extends Service {
                     public void onResponse(String response) {
                         singleCityWeather = weatherJsonToCityWeather(response);
                         dataHelper.addCity(singleCityWeather);
+                        Context context = getApplicationContext();
+                        Toast.makeText(context, "City added", Toast.LENGTH_LONG).show();
                         //Push notification
                         getAllCityWeather();
                     }

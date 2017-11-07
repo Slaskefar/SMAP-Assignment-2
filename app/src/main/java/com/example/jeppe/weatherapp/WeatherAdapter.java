@@ -1,6 +1,8 @@
 package com.example.jeppe.weatherapp;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -74,10 +76,14 @@ public class WeatherAdapter extends BaseAdapter {
             TextView txtListTemperature = convertView.findViewById(R.id.txtListTemperature);
             txtListTemperature.setText(Double.toString(weatherDataItem.temperature));
 
-            /* Need to be set somehow
+
             ImageView imgListWeatherIcon = convertView.findViewById(R.id.imgListWeatherIcon);
-            imgListWeatherIcon.setImageBitmap(something);
-            */
+
+            int id = context.getResources().getIdentifier("icon_"+weatherDataItem.iconType, "drawable", context.getPackageName());
+            Bitmap icon = BitmapFactory.decodeResource(context.getResources(),
+                    id);
+            imgListWeatherIcon.setImageBitmap(icon);
+
         }
         return convertView;
     }
