@@ -140,11 +140,9 @@ public class CityListActivity extends AppCompatActivity {
     };
 
     private void addCityToList() {
-        Intent serviceIntent = new Intent(this, WeatherService.class);
-        serviceIntent.addCategory(Globals.WEATHER_SERVICE_ADD_CITY_WEATHER);
+
         String city = edtCityName.getText().toString();
-        serviceIntent.putExtra(Globals.WEATHER_SERVICE_ADD_CITY_WEATHER_DATA, city);
-        startService(serviceIntent);
+        weatherService.addWeatherCity(city);
     }
 
     private void viewCityDetails(CityWeather city) {

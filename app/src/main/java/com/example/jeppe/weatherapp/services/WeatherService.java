@@ -55,20 +55,13 @@ public class WeatherService extends Service {
     }
 
     @Override
+    public void onCreate(){
+        super.onCreate();
+        dataHelper = new DataHelper(this);
+    }
+    @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        if (intent != null) {
-            if (intent.hasCategory(Globals.WEATHER_SERVICE_ADD_CITY_WEATHER)) {
-                String city = intent.getStringExtra(Globals.WEATHER_SERVICE_ADD_CITY_WEATHER_DATA);
-                addWeatherCity(city);
-            }
-        }
-        // insert mock data
-        cityIds = new ArrayList<>();
-        cityIds.add(524901);
-        cityIds.add(703448);
-
-        dataHelper = new DataHelper(this);
 //        checkNetwork();
         getAllCityWeather();
         return super.onStartCommand(intent, flags, startId);
@@ -107,6 +100,13 @@ public class WeatherService extends Service {
         if (queue == null) {
             queue = Volley.newRequestQueue(this);
         }
+        cityIds = new ArrayList<Integer>();
+        ArrayList<CityWeather> allCities = dataHelper.getCities();
+        for (Iterator<CityWeather> i = allCities.iterator(); i.hasNext();) {
+            CityWeather item = i.next();
+            cityIds.add(item.id);
+        }
+
 
         String url = WEATHER_API_BASE_URL + WEATHER_API_GET_MULTIPLE + cityIdsToString(cityIds) + API_KEY;
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
@@ -256,7 +256,7 @@ public class WeatherService extends Service {
                         singleCityWeather = weatherJsonToCityWeather(response);
                         dataHelper.addCity(singleCityWeather);
                         //Push notification
-                        broadcastWeather();
+                        getAllCityWeather();
                     }
                 }, new Response.ErrorListener() {
             @Override
