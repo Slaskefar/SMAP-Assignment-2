@@ -31,6 +31,24 @@ public class DataHelper {
         return new ArrayList<>();
     }
 
+    public void editCity(CityWeather city) {
+        String citiesString = sharedPref.getString(CITYKEY, null);
+        ArrayList<CityWeather> weatherData = null;
+        if (citiesString != null) {
+            weatherData = gson.fromJson(citiesString, cityWeatherType);
+            for (Iterator<CityWeather> iter = weatherData.listIterator(); iter.hasNext(); ) {
+                CityWeather w = iter.next();
+                if (w.id == city.id) {
+                    w.cityName = city.cityName;
+                    w.humidity = city.humidity;
+                    w.iconType = city.iconType;
+                    w.temperature = city.temperature;
+                    w.weatherDescription = city.weatherDescription;
+                }
+            }
+        }
+    }
+
     public void addCity(CityWeather city){
         String citiesString = sharedPref.getString(CITYKEY, null);
         ArrayList<CityWeather> weatherData = null;
