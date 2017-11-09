@@ -70,12 +70,11 @@ public class WeatherService extends Service {
     NotificationChannel mNotificationChannel;
     int mNotificationId = 1231;
 
-
     public WeatherService() {
     }
 
     @Override
-    public void onCreate(){
+    public void onCreate() {
         super.onCreate();
         //for starting the 5 minute tick inspired by https://stackoverflow.com/questions/6531950/how-to-execute-async-task-repeatedly-after-fixed-time-intervals
         final Handler timerHandler = new Handler();
@@ -86,7 +85,7 @@ public class WeatherService extends Service {
                 timerHandler.post(new Runnable() {
                     @Override
                     public void run() {
-                        getAllCityWeather();
+                        updateCityWeather();
                         Log.d("Timer", "Timer function call");
                     }
                 });
@@ -96,7 +95,6 @@ public class WeatherService extends Service {
         timer.schedule(timerTask,0,weatherUpdateTime);
 
         dataHelper = new DataHelper(this);
-        checkNetwork();
 
         // create notification channel
         mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -111,9 +109,7 @@ public class WeatherService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
-//        checkNetwork();
-        getAllCityWeather();
+        updateCityWeather();
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -139,9 +135,8 @@ public class WeatherService extends Service {
         boolean conn = netInfo.isConnected();
         if(conn) {
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     // returns most recent weather data
@@ -151,6 +146,7 @@ public class WeatherService extends Service {
 
     // gets new weather data from web API
     public void updateCityWeather() {
+        if(!checkNetwork()) {return;}
         Log.d("WeatherService", "getting city weather from openWeatherMap API");
         if (queue == null) {
             queue = Volley.newRequestQueue(this);
