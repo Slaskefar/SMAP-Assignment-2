@@ -83,8 +83,7 @@ public class WeatherService extends Service {
             mNotificationChannel.setDescription("Weather channel");
             mNotificationManager.createNotificationChannel(mNotificationChannel);
         }
-
-
+        Log.d("WeatherService", "Created");
     }
 
     @Override
@@ -125,6 +124,7 @@ public class WeatherService extends Service {
     }
 
     public void getAllCityWeather() {
+        Log.d("WeatherService", "getting city weather");
         if (queue == null) {
             queue = Volley.newRequestQueue(this);
         }
@@ -236,6 +236,7 @@ public class WeatherService extends Service {
     }
 
     private void broadcastWeather() {
+        Log.d("WeatherService", "broadcasting weather");
         Intent intent = new Intent("weather-event");
         Bundle args = new Bundle();
         args.putSerializable("weatherObj", (Serializable)allCityWeather);
