@@ -46,6 +46,8 @@ public class DataHelper {
                     w.weatherDescription = city.weatherDescription;
                 }
             }
+            String newWeatherDataString = gson.toJson(weatherData, cityWeatherType);
+            sharedPref.edit().putString(CITYKEY, newWeatherDataString).commit();
         }
     }
 

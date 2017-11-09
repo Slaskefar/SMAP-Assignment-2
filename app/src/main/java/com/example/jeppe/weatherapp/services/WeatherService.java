@@ -116,6 +116,11 @@ public class WeatherService extends Service {
                     public void onResponse(String response) {
                         allCityWeather = weatherJsonToArrayList(response);
                         //Push notification
+                        for(Iterator<CityWeather> city = allCityWeather.iterator(); city.hasNext();){
+
+                            dataHelper.editCity(city.next());
+                        }
+
                         broadcastWeather();
                     }
                 }, new Response.ErrorListener() {
