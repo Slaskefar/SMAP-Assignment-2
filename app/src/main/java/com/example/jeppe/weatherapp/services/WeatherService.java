@@ -13,6 +13,7 @@ import android.net.NetworkInfo;
 import android.os.Binder;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -46,6 +47,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class WeatherService extends Service {
 
@@ -55,6 +58,8 @@ public class WeatherService extends Service {
     public static final String WEATHER_API_GET_SINGLE = "/weather?q=";
 
     public static final String NOTIFICATION_CHANNEL = "weather_channel";
+    private static final long weatherUpdateTime = 5000*60;
+    private static final double kelvinConstant = 272.15;
 
     RequestQueue queue;
     Gson gson;
@@ -70,10 +75,27 @@ public class WeatherService extends Service {
     }
 
     @Override
-    public void onCreate(){
+    public void onCreate() {
         super.onCreate();
+        //for starting the 5 minute tick inspired by https://stackoverflow.com/questions/6531950/how-to-execute-async-task-repeatedly-after-fixed-time-intervals
+        final Handler timerHandler = new Handler();
+        Timer timer = new Timer();
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                timerHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateCityWeather();
+                        Log.d("Timer", "Timer function call");
+                    }
+                });
+            }
+        };
+
+        timer.schedule(timerTask,0,weatherUpdateTime);
+
         dataHelper = new DataHelper(this);
-//        checkNetwork();
 
         // create notification channel
         mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -88,9 +110,7 @@ public class WeatherService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
-//        checkNetwork();
-        getAllCityWeather();
+        updateCityWeather();
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -99,8 +119,6 @@ public class WeatherService extends Service {
             return WeatherService.this;
         }
     }
-
-
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -111,20 +129,26 @@ public class WeatherService extends Service {
     // RemoteService for a more complete example.
     private final IBinder mBinder = new WeatherBinder();
 
-    //method stolen from SMAP lecture demo L8
+    // method stolen from SMAP lecture demo L8
     private boolean checkNetwork() {
         ConnectivityManager connectMan = (ConnectivityManager)this.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = connectMan.getActiveNetworkInfo();
         boolean conn = netInfo.isConnected();
-        if(conn == true) {
+        if(conn) {
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
-    public void getAllCityWeather() {
-        Log.d("WeatherService", "getting city weather");
+    // returns most recent weather data
+    public List<CityWeather> getAllCityWeather() {
+        return allCityWeather;
+    }
+
+    // gets new weather data from web API
+    public void updateCityWeather() {
+        if(!checkNetwork()) {return;}
+        Log.d("WeatherService", "getting city weather from openWeatherMap API");
         if (queue == null) {
             queue = Volley.newRequestQueue(this);
         }
@@ -135,7 +159,6 @@ public class WeatherService extends Service {
             cityIds.add(item.id);
         }
 
-
         String url = WEATHER_API_BASE_URL + WEATHER_API_GET_MULTIPLE + cityIdsToString(cityIds) + API_KEY;
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
@@ -143,11 +166,6 @@ public class WeatherService extends Service {
                     public void onResponse(String response) {
                         allCityWeather = weatherJsonToArrayList(response);
                         //Push notification
-                        for(Iterator<CityWeather> city = allCityWeather.iterator(); city.hasNext();){
-
-                            dataHelper.editCity(city.next());
-                        }
-
                         broadcastWeather();
                         sendNotification();
                     }
@@ -155,7 +173,6 @@ public class WeatherService extends Service {
             @Override
             public void onErrorResponse(VolleyError error) {
                 allCityWeather = null;
-                //Push notification
             }
         });
 
@@ -220,7 +237,7 @@ public class WeatherService extends Service {
         cityWeather.weatherDescription = weatherData.getWeather().iterator().next().getDescription();
         cityWeather.cityName = weatherData.getName();
         cityWeather.humidity = weatherData.getMain().getHumidity();
-        cityWeather.temperature = weatherData.getMain().getTemp();
+        cityWeather.temperature = weatherData.getMain().getTemp() - kelvinConstant;
         cityWeather.iconType = weatherData.getWeather().iterator().next().getIcon();
         cityWeather.id = weatherData.getId();
 
@@ -243,9 +260,9 @@ public class WeatherService extends Service {
     private void broadcastWeather() {
         Log.d("WeatherService", "broadcasting weather");
         Intent intent = new Intent("weather-event");
-        Bundle args = new Bundle();
-        args.putSerializable("weatherObj", (Serializable)allCityWeather);
-        intent.putExtra("weather", args);
+//        Bundle args = new Bundle();
+//        args.putSerializable("weatherObj", (Serializable)allCityWeather);
+//        intent.putExtra("weather", args);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
@@ -263,7 +280,7 @@ public class WeatherService extends Service {
             cityWeather.weatherDescription = list.getWeather().iterator().next().getDescription();
             cityWeather.cityName = list.getName();
             cityWeather.humidity = list.getMain().getHumidity();
-            cityWeather.temperature = list.getMain().getTemp();
+            cityWeather.temperature = list.getMain().getTemp() - kelvinConstant;
             cityWeather.iconType = list.getWeather().iterator().next().getIcon();
             cityWeather.id = list.getId();
 
@@ -272,6 +289,7 @@ public class WeatherService extends Service {
         return cityWeatherList;
     }
 
+    // Gets city ID from cityName and adds the city to the list in sharedPrefs
     public void addWeatherCity(String cityName){
         if (queue == null) {
             queue = Volley.newRequestQueue(this);
@@ -287,7 +305,7 @@ public class WeatherService extends Service {
                         Context context = getApplicationContext();
                         Toast.makeText(context, "City added", Toast.LENGTH_LONG).show();
                         //Push notification
-                        getAllCityWeather();
+                        updateCityWeather();
                     }
                 }, new Response.ErrorListener() {
             @Override

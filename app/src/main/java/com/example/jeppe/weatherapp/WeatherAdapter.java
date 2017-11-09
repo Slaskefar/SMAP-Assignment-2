@@ -87,6 +87,4 @@ public class WeatherAdapter extends BaseAdapter {
         }
         return convertView;
     }
-
-
 }
