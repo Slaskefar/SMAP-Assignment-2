@@ -1,14 +1,20 @@
 package com.example.jeppe.weatherapp.services;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.media.RingtoneManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Binder;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
@@ -21,6 +27,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.jeppe.weatherapp.DAL.DataHelper;
 import com.example.jeppe.weatherapp.Globals;
+import com.example.jeppe.weatherapp.R;
 import com.example.jeppe.weatherapp.models.CityWeather;
 import com.example.jeppe.weatherapp.models.CityWeather;
 import com.example.jeppe.weatherapp.models.weatherDataResponse.WeatherData;
@@ -34,7 +41,9 @@ import org.json.JSONTokener;
 import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -45,12 +54,17 @@ public class WeatherService extends Service {
     public static final String WEATHER_API_GET_MULTIPLE = "/group?id=";
     public static final String WEATHER_API_GET_SINGLE = "/weather?q=";
 
+    public static final String NOTIFICATION_CHANNEL = "weather_channel";
+
     RequestQueue queue;
     Gson gson;
     CityWeather singleCityWeather;
     List<CityWeather> allCityWeather;
     ArrayList<Integer> cityIds;
     private DataHelper dataHelper;
+    NotificationManager mNotificationManager;
+    NotificationChannel mNotificationChannel;
+    int mNotificationId = 1231;
 
     public WeatherService() {
     }
@@ -59,7 +73,19 @@ public class WeatherService extends Service {
     public void onCreate(){
         super.onCreate();
         dataHelper = new DataHelper(this);
+//        checkNetwork();
+
+        // create notification channel
+        mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        // inspired from https://stackoverflow.com/questions/45395669/notifications-fail-to-display-in-android-oreo-api-26
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            mNotificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL, "Weather notifications", NotificationManager.IMPORTANCE_DEFAULT);
+            mNotificationChannel.setDescription("Weather channel");
+            mNotificationManager.createNotificationChannel(mNotificationChannel);
+        }
+        Log.d("WeatherService", "Created");
     }
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
@@ -98,6 +124,7 @@ public class WeatherService extends Service {
     }
 
     public void getAllCityWeather() {
+        Log.d("WeatherService", "getting city weather");
         if (queue == null) {
             queue = Volley.newRequestQueue(this);
         }
@@ -122,6 +149,7 @@ public class WeatherService extends Service {
                         }
 
                         broadcastWeather();
+                        sendNotification();
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -213,13 +241,8 @@ public class WeatherService extends Service {
     }
 
     private void broadcastWeather() {
-        Log.d("Weatherservice", "broadcasting weather");
+        Log.d("WeatherService", "broadcasting weather");
         Intent intent = new Intent("weather-event");
-//        if (gson == null) {
-//            gson = new Gson();
-//        }
-//        intent.putExtra("weather", gson.toJson(allCityWeather));
-//        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
         Bundle args = new Bundle();
         args.putSerializable("weatherObj", (Serializable)allCityWeather);
         intent.putExtra("weather", args);
@@ -275,5 +298,15 @@ public class WeatherService extends Service {
         });
 
         queue.add(stringRequest);
+    }
+
+    private void sendNotification() {
+        String currentTime = Calendar.getInstance().getTime().toString();
+
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL)
+                .setSmallIcon(R.drawable.icon_01d)
+                .setContentTitle("Weather has been updated")
+                .setContentText(currentTime);
+        mNotificationManager.notify(mNotificationId, mBuilder.build());
     }
 }
