@@ -81,18 +81,12 @@ public class CityListActivity extends AppCompatActivity {
             }
         });
 
-
+        Intent intent = new Intent(this, WeatherService.class);
+        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
     }
 
     private void refresh() {
-        weatherService.getAllCityWeather();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        Intent intent = new Intent(this, WeatherService.class);
-        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+        weatherService.updateCityWeather();
     }
 
     private ServiceConnection mConnection = new ServiceConnection() {
@@ -101,6 +95,10 @@ public class CityListActivity extends AppCompatActivity {
             WeatherService.WeatherBinder binder = (WeatherService.WeatherBinder)iBinder;
             weatherService = binder.getService();
             bound = true;
+
+            weatherDataList = (ArrayList<CityWeather>) weatherService.getAllCityWeather();
+            weatherAdapter.weatherData = weatherDataList;
+            weatherAdapter.notifyDataSetChanged();
         }
 
         @Override
@@ -132,7 +130,7 @@ public class CityListActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             Bundle bundle = intent.getBundleExtra("weather");
-            ArrayList<CityWeather> weather = (ArrayList<CityWeather>)bundle.getSerializable("weatherObj");
+            ArrayList<CityWeather> weather = (ArrayList<CityWeather>) weatherService.getAllCityWeather();
             //do something with weather
             weatherAdapter.weatherData = weather;
             weatherDataList = weather;
