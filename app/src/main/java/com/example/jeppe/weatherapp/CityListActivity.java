@@ -85,7 +85,7 @@ public class CityListActivity extends AppCompatActivity {
     }
 
     private void refresh() {
-
+        weatherService.getAllCityWeather();
     }
 
     @Override
@@ -93,13 +93,6 @@ public class CityListActivity extends AppCompatActivity {
         super.onStart();
         Intent intent = new Intent(this, WeatherService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        unbindService(mConnection);
-        bound = false;
     }
 
     private ServiceConnection mConnection = new ServiceConnection() {
@@ -120,6 +113,13 @@ public class CityListActivity extends AppCompatActivity {
     protected void onResume() {
         LocalBroadcastManager.getInstance(this).registerReceiver(weatherReceiver, new IntentFilter("weather-event"));
         super.onResume();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unbindService(mConnection);
+        bound = false;
     }
 
     @Override

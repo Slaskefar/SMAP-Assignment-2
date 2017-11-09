@@ -121,8 +121,8 @@ public class CityDetailsActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onDestroy() {
+        super.onDestroy();
         unbindService(mConnection);
         bound = false;
     }
