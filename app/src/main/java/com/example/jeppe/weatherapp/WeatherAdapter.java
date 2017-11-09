@@ -76,7 +76,7 @@ public class WeatherAdapter extends BaseAdapter {
             TextView txtListTemperature = convertView.findViewById(R.id.txtListTemperature);
             txtListTemperature.setText(Double.toString(weatherDataItem.temperature));
 
-
+            //https://stackoverflow.com/questions/16369814/how-to-access-the-drawable-resources-by-name-in-android
             ImageView imgListWeatherIcon = convertView.findViewById(R.id.imgListWeatherIcon);
 
             int id = context.getResources().getIdentifier("icon_"+weatherDataItem.iconType, "drawable", context.getPackageName());
