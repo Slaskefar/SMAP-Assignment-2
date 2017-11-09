@@ -135,6 +135,7 @@ public class CityListActivity extends AppCompatActivity {
             ArrayList<CityWeather> weather = (ArrayList<CityWeather>)bundle.getSerializable("weatherObj");
             //do something with weather
             weatherAdapter.weatherData = weather;
+            weatherDataList = weather;
             weatherAdapter.notifyDataSetChanged();
         }
     };
