@@ -87,7 +87,7 @@ public class WeatherService extends Service {
                 timerHandler.post(new Runnable() {
                     @Override
                     public void run() {
-                        getAllCityWeather();
+                        updateCityWeather();
                         Log.d("Timer", "Timer function call");
                     }
                 });
