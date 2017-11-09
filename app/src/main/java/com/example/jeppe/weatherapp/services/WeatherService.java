@@ -59,6 +59,7 @@ public class WeatherService extends Service {
 
     public static final String NOTIFICATION_CHANNEL = "weather_channel";
     private static final long weatherUpdateTime = 5000*60;
+    private static final double kelvinConstant = 272.15;
 
     RequestQueue queue;
     Gson gson;
@@ -240,7 +241,7 @@ public class WeatherService extends Service {
         cityWeather.weatherDescription = weatherData.getWeather().iterator().next().getDescription();
         cityWeather.cityName = weatherData.getName();
         cityWeather.humidity = weatherData.getMain().getHumidity();
-        cityWeather.temperature = weatherData.getMain().getTemp();
+        cityWeather.temperature = weatherData.getMain().getTemp() - kelvinConstant;
         cityWeather.iconType = weatherData.getWeather().iterator().next().getIcon();
         cityWeather.id = weatherData.getId();
 
@@ -283,7 +284,7 @@ public class WeatherService extends Service {
             cityWeather.weatherDescription = list.getWeather().iterator().next().getDescription();
             cityWeather.cityName = list.getName();
             cityWeather.humidity = list.getMain().getHumidity();
-            cityWeather.temperature = list.getMain().getTemp();
+            cityWeather.temperature = list.getMain().getTemp() - kelvinConstant;
             cityWeather.iconType = list.getWeather().iterator().next().getIcon();
             cityWeather.id = list.getId();
 

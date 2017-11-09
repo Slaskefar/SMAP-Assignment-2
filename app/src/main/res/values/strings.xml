@@ -6,5 +6,5 @@
     <string name="cityDetailsActivity_btnOk">OK</string>
     <string name="cityDetailsActivity_txtDescription">Description</string>
     <string name="cityDetailsActivity_txtPercentage">%</string>
-    <string name="cityDetailsActivity_txtDegree">K</string>
+    <string name="cityDetailsActivity_txtDegree">\u2103</string>
 </resources>
