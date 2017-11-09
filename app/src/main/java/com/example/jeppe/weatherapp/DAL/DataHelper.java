@@ -30,7 +30,7 @@ public class DataHelper {
         }
         return new ArrayList<>();
     }
-
+    //Inspired from https://stackoverflow.com/questions/18410035/ways-to-iterate-over-a-list-in-java
     public void editCity(CityWeather city) {
         String citiesString = sharedPref.getString(CITYKEY, null);
         ArrayList<CityWeather> weatherData = null;
@@ -50,7 +50,7 @@ public class DataHelper {
             sharedPref.edit().putString(CITYKEY, newWeatherDataString).commit();
         }
     }
-
+    //Inspired from https://stackoverflow.com/questions/18410035/ways-to-iterate-over-a-list-in-java
     public void addCity(CityWeather city){
         String citiesString = sharedPref.getString(CITYKEY, null);
         ArrayList<CityWeather> weatherData = null;

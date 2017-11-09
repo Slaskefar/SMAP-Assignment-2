@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * Created by kaspe on 27-10-2017.
  */
-
+//Highly inspired by Kasper Løvborgs solution for Adapter exercise
 public class WeatherAdapter extends BaseAdapter {
 
     private Context context;
