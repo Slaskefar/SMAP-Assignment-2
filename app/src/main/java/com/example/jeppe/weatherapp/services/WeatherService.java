@@ -13,6 +13,7 @@ import android.net.NetworkInfo;
 import android.os.Binder;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -46,6 +47,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class WeatherService extends Service {
 
@@ -55,6 +58,7 @@ public class WeatherService extends Service {
     public static final String WEATHER_API_GET_SINGLE = "/weather?q=";
 
     public static final String NOTIFICATION_CHANNEL = "weather_channel";
+    private static final long weatherUpdateTime = 5000*60;
 
     RequestQueue queue;
     Gson gson;
@@ -66,12 +70,31 @@ public class WeatherService extends Service {
     NotificationChannel mNotificationChannel;
     int mNotificationId = 1231;
 
+
     public WeatherService() {
     }
 
     @Override
     public void onCreate(){
         super.onCreate();
+        //for starting the 5 minute tick inspired by https://stackoverflow.com/questions/6531950/how-to-execute-async-task-repeatedly-after-fixed-time-intervals
+        final Handler timerHandler = new Handler();
+        Timer timer = new Timer();
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                timerHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        getAllCityWeather();
+                        Log.d("Timer", "Timer function call");
+                    }
+                });
+            }
+        };
+
+        timer.schedule(timerTask,0,weatherUpdateTime);
+
         dataHelper = new DataHelper(this);
 //        checkNetwork();
 
