@@ -7,12 +7,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.jeppe.weatherapp.DAL.DataHelper;
@@ -30,6 +33,7 @@ public class CityDetailsActivity extends AppCompatActivity {
     TextView txtDescription;
     CityWeather currentCityWeather;
     WeatherService weatherService;
+    ImageView imageIcon;
     private Boolean bound = false;
 
 
@@ -47,6 +51,13 @@ public class CityDetailsActivity extends AppCompatActivity {
 
         txtDescription = findViewById(R.id.txtDescription);
         txtDescription.setText(currentCityWeather.weatherDescription);
+
+       imageIcon = findViewById(R.id.imgWeatherIcon);
+
+        int id = getResources().getIdentifier("icon_"+currentCityWeather.iconType, "drawable", getPackageName());
+        Bitmap icon = BitmapFactory.decodeResource(getResources(),
+                id);
+        imageIcon.setImageBitmap(icon);
 
         txtHumidity = findViewById(R.id.txtHumidity);
         txtHumidity.setText(Integer.toString(currentCityWeather.humidity));
