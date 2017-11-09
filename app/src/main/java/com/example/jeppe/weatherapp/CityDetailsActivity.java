@@ -80,6 +80,9 @@ public class CityDetailsActivity extends AppCompatActivity {
                 ok();
             }
         });
+
+        Intent intent = new Intent(this, WeatherService.class);
+        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
     }
 
     private void removeCity() {
@@ -122,13 +125,6 @@ public class CityDetailsActivity extends AppCompatActivity {
     protected void onPause() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(weatherReceiver);
         super.onPause();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        Intent intent = new Intent(this, WeatherService.class);
-        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
     }
 
     @Override

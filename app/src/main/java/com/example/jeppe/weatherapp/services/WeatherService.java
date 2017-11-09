@@ -96,7 +96,7 @@ public class WeatherService extends Service {
         timer.schedule(timerTask,0,weatherUpdateTime);
 
         dataHelper = new DataHelper(this);
-//        checkNetwork();
+        checkNetwork();
 
         // create notification channel
         mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -123,8 +123,6 @@ public class WeatherService extends Service {
         }
     }
 
-
-
     @Override
     public IBinder onBind(Intent intent) {
         return mBinder;
@@ -134,20 +132,26 @@ public class WeatherService extends Service {
     // RemoteService for a more complete example.
     private final IBinder mBinder = new WeatherBinder();
 
-    //method stolen from SMAP lecture demo L8
+    // method stolen from SMAP lecture demo L8
     private boolean checkNetwork() {
         ConnectivityManager connectMan = (ConnectivityManager)this.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = connectMan.getActiveNetworkInfo();
         boolean conn = netInfo.isConnected();
-        if(conn == true) {
+        if(conn) {
             return true;
         } else {
             return false;
         }
     }
 
-    public void getAllCityWeather() {
-        Log.d("WeatherService", "getting city weather");
+    // returns most recent weather data
+    public List<CityWeather> getAllCityWeather() {
+        return allCityWeather;
+    }
+
+    // gets new weather data from web API
+    public void updateCityWeather() {
+        Log.d("WeatherService", "getting city weather from openWeatherMap API");
         if (queue == null) {
             queue = Volley.newRequestQueue(this);
         }
@@ -158,7 +162,6 @@ public class WeatherService extends Service {
             cityIds.add(item.id);
         }
 
-
         String url = WEATHER_API_BASE_URL + WEATHER_API_GET_MULTIPLE + cityIdsToString(cityIds) + API_KEY;
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
@@ -166,11 +169,6 @@ public class WeatherService extends Service {
                     public void onResponse(String response) {
                         allCityWeather = weatherJsonToArrayList(response);
                         //Push notification
-                        for(Iterator<CityWeather> city = allCityWeather.iterator(); city.hasNext();){
-
-                            dataHelper.editCity(city.next());
-                        }
-
                         broadcastWeather();
                         sendNotification();
                     }
@@ -178,7 +176,6 @@ public class WeatherService extends Service {
             @Override
             public void onErrorResponse(VolleyError error) {
                 allCityWeather = null;
-                //Push notification
             }
         });
 
@@ -266,9 +263,9 @@ public class WeatherService extends Service {
     private void broadcastWeather() {
         Log.d("WeatherService", "broadcasting weather");
         Intent intent = new Intent("weather-event");
-        Bundle args = new Bundle();
-        args.putSerializable("weatherObj", (Serializable)allCityWeather);
-        intent.putExtra("weather", args);
+//        Bundle args = new Bundle();
+//        args.putSerializable("weatherObj", (Serializable)allCityWeather);
+//        intent.putExtra("weather", args);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
@@ -295,6 +292,7 @@ public class WeatherService extends Service {
         return cityWeatherList;
     }
 
+    // Gets city ID from cityName and adds the city to the list in sharedPrefs
     public void addWeatherCity(String cityName){
         if (queue == null) {
             queue = Volley.newRequestQueue(this);
@@ -310,7 +308,7 @@ public class WeatherService extends Service {
                         Context context = getApplicationContext();
                         Toast.makeText(context, "City added", Toast.LENGTH_LONG).show();
                         //Push notification
-                        getAllCityWeather();
+                        updateCityWeather();
                     }
                 }, new Response.ErrorListener() {
             @Override
