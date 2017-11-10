@@ -36,7 +36,6 @@ public class CityDetailsActivity extends AppCompatActivity {
     ImageView imageIcon;
     private Boolean bound = false;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,7 +96,6 @@ public class CityDetailsActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             Bundle bundle = intent.getBundleExtra("weather");
             ArrayList<CityWeather> weather = (ArrayList<CityWeather>)bundle.getSerializable("weatherObj");
-            //do something with weather
         }
     };
 

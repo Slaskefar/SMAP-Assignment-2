@@ -1,7 +1,7 @@
 <resources>
     <string name="cityListActivity_btnAdd">Add</string>
     <string name="cityListActivity_btnRefresh">Refresh</string>
-    <string name="app_name">City Weather</string>
+    <string name="app_name">Weather App 05</string>
     <string name="cityDetailsActivity_btnRemove">Remove</string>
     <string name="cityDetailsActivity_btnOk">OK</string>
     <string name="cityDetailsActivity_txtDescription">Description</string>
