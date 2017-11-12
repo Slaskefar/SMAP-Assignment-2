@@ -16,7 +16,6 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import com.example.jeppe.weatherapp.DAL.DataHelper;
 import com.example.jeppe.weatherapp.models.CityWeather;
 
 import java.io.Serializable;
@@ -37,7 +36,6 @@ public class CityListActivity extends AppCompatActivity {
     Button btnRefresh;
     Button btnAdd;
     ListView lviWeatherList;
-    private DataHelper dataHelper;
     EditText edtCityName;
     int CITY_LIST_ACTIVITY_INTENT_CODE = 101;
     WeatherService weatherService;
@@ -49,10 +47,7 @@ public class CityListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_city_list);
-        dataHelper = new DataHelper(this);
-        //dataHelper.addCity(new CityWeather("testId","TestCity",10,12,"Some Description"));
 
-        weatherDataList = dataHelper.getCities();
         edtCityName = findViewById(R.id.edtCityName);
         weatherAdapter = new WeatherAdapter(this, weatherDataList);
         lviWeatherList = findViewById(R.id.lviWeatherList);
@@ -83,6 +78,7 @@ public class CityListActivity extends AppCompatActivity {
 
         Intent intent = new Intent(this, WeatherService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+
     }
 
     private void refresh() {
@@ -96,7 +92,7 @@ public class CityListActivity extends AppCompatActivity {
             weatherService = binder.getService();
             bound = true;
 
-            weatherDataList = (ArrayList<CityWeather>) weatherService.getAllCityWeather();
+            weatherDataList = weatherService.getAllCityWeather();
             weatherAdapter.weatherData = weatherDataList;
             weatherAdapter.notifyDataSetChanged();
         }
@@ -130,7 +126,7 @@ public class CityListActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             Bundle bundle = intent.getBundleExtra("weather");
-            ArrayList<CityWeather> weather = (ArrayList<CityWeather>) weatherService.getAllCityWeather();
+            ArrayList<CityWeather> weather = weatherService.getAllCityWeather();
             //do something with weather
             weatherAdapter.weatherData = weather;
             weatherDataList = weather;
@@ -171,9 +167,6 @@ public class CityListActivity extends AppCompatActivity {
         //Remove city here and refresh ui here
         CityWeather cityToRemove = new CityWeather();
         cityToRemove.id = cityId;
-        dataHelper.deleteCity(cityToRemove);
-        weatherDataList = dataHelper.getCities();
-        weatherAdapter.weatherData = weatherDataList;
-        weatherAdapter.notifyDataSetChanged();
+        weatherService.removeCity(cityToRemove);
     }
 }

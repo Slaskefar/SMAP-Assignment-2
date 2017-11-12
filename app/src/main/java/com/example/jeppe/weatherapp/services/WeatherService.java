@@ -64,7 +64,7 @@ public class WeatherService extends Service {
     RequestQueue queue;
     Gson gson;
     CityWeather singleCityWeather;
-    List<CityWeather> allCityWeather;
+    ArrayList<CityWeather> allCityWeather;
     ArrayList<Integer> cityIds;
     private DataHelper dataHelper;
     NotificationManager mNotificationManager;
@@ -141,7 +141,7 @@ public class WeatherService extends Service {
     }
 
     // returns most recent weather data
-    public List<CityWeather> getAllCityWeather() {
+    public ArrayList<CityWeather> getAllCityWeather() {
         return allCityWeather;
     }
 
@@ -326,5 +326,10 @@ public class WeatherService extends Service {
                 .setContentTitle("Weather has been updated")
                 .setContentText(currentTime);
         mNotificationManager.notify(mNotificationId, mBuilder.build());
+    }
+
+    public void removeCity(CityWeather city) {
+        dataHelper.deleteCity(city);
+        updateCityWeather();
     }
 }
