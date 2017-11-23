@@ -90,7 +90,6 @@ public class CityListActivity extends AppCompatActivity {
 
         Intent intent = new Intent(this, WeatherService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-
     }
 
     private void refresh() {
@@ -136,7 +135,6 @@ public class CityListActivity extends AppCompatActivity {
     private BroadcastReceiver weatherReceiver;
 
     private void addCityToList() {
-
         String city = edtCityName.getText().toString();
         weatherService.addWeatherCity(city);
     }
@@ -147,27 +145,6 @@ public class CityListActivity extends AppCompatActivity {
         args.putSerializable(Globals.CITY_DETAILS_SINGLE_CITY, city);
         detailsIntent.putExtra(Globals.CITY_DETAILS_BUNDLE, args);
         //probably should be start activity for result
-        startActivityForResult(detailsIntent, CITY_LIST_ACTIVITY_INTENT_CODE);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == CITY_LIST_ACTIVITY_INTENT_CODE) {
-            switch (resultCode) {
-                case RESULT_OK:
-                    //Do nothing
-                    break;
-                case Globals.REMOVE_CITY:
-                    removeCity(data.getIntExtra(Globals.CITY_DETAILS_REMOVE_CITY, -1));
-                    break;
-            }
-        }
-    }
-
-    private void removeCity(int cityId) {
-        //Remove city here and refresh ui here
-        CityWeather cityToRemove = new CityWeather();
-        cityToRemove.id = cityId;
-        weatherService.removeCity(cityToRemove);
+        startActivity(detailsIntent);
     }
 }

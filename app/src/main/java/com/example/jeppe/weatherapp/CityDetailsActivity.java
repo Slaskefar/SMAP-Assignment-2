@@ -85,19 +85,20 @@ public class CityDetailsActivity extends AppCompatActivity {
     }
 
     private void removeCity() {
-        Intent returnIntent = new Intent();
-        returnIntent.putExtra(Globals.CITY_DETAILS_REMOVE_CITY, currentCityWeather.id);
-        setResult(Globals.REMOVE_CITY, returnIntent);
+        CityWeather cityToRemove = new CityWeather();
+        cityToRemove.id = currentCityWeather.id;
+        weatherService.removeCity(cityToRemove);
+
         finish();
     }
 
-    private BroadcastReceiver weatherReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Bundle bundle = intent.getBundleExtra("weather");
-            ArrayList<CityWeather> weather = (ArrayList<CityWeather>)bundle.getSerializable("weatherObj");
-        }
-    };
+//    private BroadcastReceiver weatherReceiver = new BroadcastReceiver() {
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            Bundle bundle = intent.getBundleExtra("weather");
+//            ArrayList<CityWeather> weather = (ArrayList<CityWeather>)bundle.getSerializable("weatherObj");
+//        }
+//    };
 
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
@@ -115,13 +116,13 @@ public class CityDetailsActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
-        LocalBroadcastManager.getInstance(this).registerReceiver(weatherReceiver, new IntentFilter("weather-event"));
+//        LocalBroadcastManager.getInstance(this).registerReceiver(weatherReceiver, new IntentFilter("weather-event"));
         super.onResume();
     }
 
     @Override
     protected void onPause() {
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(weatherReceiver);
+//        LocalBroadcastManager.getInstance(this).unregisterReceiver(weatherReceiver);
         super.onPause();
     }
 
