@@ -87,7 +87,7 @@ public class CityDetailsActivity extends AppCompatActivity {
         this.weatherReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                // do stuff
+                currentCityWeather = weatherService.getSingleCity(currentCityWeather);
             }
         };
         LocalBroadcastManager.getInstance(this).registerReceiver(this.weatherReceiver, new IntentFilter("weather-event"));

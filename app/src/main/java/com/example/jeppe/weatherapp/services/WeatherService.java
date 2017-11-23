@@ -58,7 +58,7 @@ public class WeatherService extends Service {
     public static final String WEATHER_API_GET_SINGLE = "/weather?q=";
 
     public static final String NOTIFICATION_CHANNEL = "weather_channel";
-    private static final long weatherUpdateTime = 5000;
+    private static final long weatherUpdateTime = 5000*60;
     private static final double kelvinConstant = 272.15;
 
     RequestQueue queue;
@@ -183,31 +183,8 @@ public class WeatherService extends Service {
         }
     }
 
-//    public CityWeather getCityWeather(String cityName) {
-//        if (queue == null) {
-//            queue = Volley.newRequestQueue(this);
-//        }
-//        String url = WEATHER_API_BASE_URL + WEATHER_API_GET_SINGLE + cityName + API_KEY;
-//        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-//                new Response.Listener<String>() {
-//                    @Override
-//                    public void onResponse(String response) {
-//                        singleCityWeather = weatherJsonToPojo(response);
-//                        //broadcast
-//                    }
-//                }, new Response.ErrorListener() {
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//                singleCityWeather = null;
-//            }
-//        });
-//
-//        queue.add(stringRequest);
-//
-//    }
-
-    private Bitmap getWeatherIcon(String id) {
-        return null;
+    public CityWeather getSingleCity(CityWeather city) {
+        return dataHelper.getCity(city);
     }
 
     private ArrayList<CityWeather> weatherJsonToArrayList(String json) {
