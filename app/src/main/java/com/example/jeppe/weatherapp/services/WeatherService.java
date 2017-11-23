@@ -158,25 +158,29 @@ public class WeatherService extends Service {
             CityWeather item = i.next();
             cityIds.add(item.id);
         }
+        if(cityIds.isEmpty()) {
+            allCityWeather = allCities;
+            broadcastWeather();
+        } else {
+            String url = WEATHER_API_BASE_URL + WEATHER_API_GET_MULTIPLE + cityIdsToString(cityIds) + API_KEY;
+            StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            allCityWeather = weatherJsonToArrayList(response);
+                            //Push notification
+                            broadcastWeather();
+                            sendNotification();
+                        }
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    allCityWeather = null;
+                }
+            });
 
-        String url = WEATHER_API_BASE_URL + WEATHER_API_GET_MULTIPLE + cityIdsToString(cityIds) + API_KEY;
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        allCityWeather = weatherJsonToArrayList(response);
-                        //Push notification
-                        broadcastWeather();
-                        sendNotification();
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                allCityWeather = null;
-            }
-        });
-
-        queue.add(stringRequest);
+            queue.add(stringRequest);
+        }
     }
 
 //    public CityWeather getCityWeather(String cityName) {

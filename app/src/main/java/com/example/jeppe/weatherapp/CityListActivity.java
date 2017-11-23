@@ -47,6 +47,18 @@ public class CityListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_city_list);
+        this.weatherReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Bundle bundle = intent.getBundleExtra("weather");
+                ArrayList<CityWeather> weather = weatherService.getAllCityWeather();
+                //do something with weather
+                weatherAdapter.weatherData = weather;
+                weatherDataList = weather;
+                weatherAdapter.notifyDataSetChanged();
+            }
+        };
+        LocalBroadcastManager.getInstance(this).registerReceiver(weatherReceiver, new IntentFilter("weather-event"));
 
         edtCityName = findViewById(R.id.edtCityName);
         weatherAdapter = new WeatherAdapter(this, weatherDataList);
@@ -105,34 +117,23 @@ public class CityListActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
-        LocalBroadcastManager.getInstance(this).registerReceiver(weatherReceiver, new IntentFilter("weather-event"));
         super.onResume();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(weatherReceiver);
         unbindService(mConnection);
         bound = false;
     }
 
     @Override
     protected void onPause() {
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(weatherReceiver);
         super.onPause();
     }
 
-    private BroadcastReceiver weatherReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Bundle bundle = intent.getBundleExtra("weather");
-            ArrayList<CityWeather> weather = weatherService.getAllCityWeather();
-            //do something with weather
-            weatherAdapter.weatherData = weather;
-            weatherDataList = weather;
-            weatherAdapter.notifyDataSetChanged();
-        }
-    };
+    private BroadcastReceiver weatherReceiver;
 
     private void addCityToList() {
 
