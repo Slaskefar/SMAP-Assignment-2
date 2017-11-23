@@ -35,6 +35,7 @@ public class CityDetailsActivity extends AppCompatActivity {
     WeatherService weatherService;
     ImageView imageIcon;
     private Boolean bound = false;
+    private BroadcastReceiver weatherReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +83,14 @@ public class CityDetailsActivity extends AppCompatActivity {
 
         Intent intent = new Intent(this, WeatherService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+
+        this.weatherReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                // do stuff
+            }
+        };
+        LocalBroadcastManager.getInstance(this).registerReceiver(this.weatherReceiver, new IntentFilter("weather-event"));
     }
 
     private void removeCity() {
@@ -91,14 +100,6 @@ public class CityDetailsActivity extends AppCompatActivity {
 
         finish();
     }
-
-//    private BroadcastReceiver weatherReceiver = new BroadcastReceiver() {
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//            Bundle bundle = intent.getBundleExtra("weather");
-//            ArrayList<CityWeather> weather = (ArrayList<CityWeather>)bundle.getSerializable("weatherObj");
-//        }
-//    };
 
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
@@ -115,20 +116,9 @@ public class CityDetailsActivity extends AppCompatActivity {
     };
 
     @Override
-    protected void onResume() {
-//        LocalBroadcastManager.getInstance(this).registerReceiver(weatherReceiver, new IntentFilter("weather-event"));
-        super.onResume();
-    }
-
-    @Override
-    protected void onPause() {
-//        LocalBroadcastManager.getInstance(this).unregisterReceiver(weatherReceiver);
-        super.onPause();
-    }
-
-    @Override
     protected void onDestroy() {
         super.onDestroy();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(this.weatherReceiver);
         unbindService(mConnection);
         bound = false;
     }

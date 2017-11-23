@@ -58,7 +58,7 @@ public class WeatherService extends Service {
     public static final String WEATHER_API_GET_SINGLE = "/weather?q=";
 
     public static final String NOTIFICATION_CHANNEL = "weather_channel";
-    private static final long weatherUpdateTime = 5000*60;
+    private static final long weatherUpdateTime = 5000;
     private static final double kelvinConstant = 272.15;
 
     RequestQueue queue;

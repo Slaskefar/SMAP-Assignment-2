@@ -42,6 +42,7 @@ public class CityListActivity extends AppCompatActivity {
     WeatherAdapter weatherAdapter;
     ArrayList<CityWeather> weatherDataList;
     private Boolean bound = false;
+    private BroadcastReceiver weatherReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,8 +132,6 @@ public class CityListActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
     }
-
-    private BroadcastReceiver weatherReceiver;
 
     private void addCityToList() {
         String city = edtCityName.getText().toString();
