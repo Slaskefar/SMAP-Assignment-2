@@ -30,6 +30,25 @@ public class DataHelper {
         }
         return new ArrayList<>();
     }
+
+    public CityWeather getCity(CityWeather city){
+        String citiesString = sharedPref.getString(CITYKEY,null);
+        if(citiesString != null){
+            ArrayList<CityWeather> weatherData = gson.fromJson(citiesString, cityWeatherType);
+            for (Iterator<CityWeather> iter = weatherData.listIterator(); iter.hasNext(); ) {
+                CityWeather w = iter.next();
+                if (w.id == city.id) {
+                    w.cityName = city.cityName;
+                    w.humidity = city.humidity;
+                    w.iconType = city.iconType;
+                    w.temperature = city.temperature;
+                    w.weatherDescription = city.weatherDescription;
+                    return w;
+                }
+            }
+        }
+        return null;
+    }
     //Inspired from https://stackoverflow.com/questions/18410035/ways-to-iterate-over-a-list-in-java
     public void editCity(CityWeather city) {
         String citiesString = sharedPref.getString(CITYKEY, null);
